@@ -12,7 +12,10 @@ const server = express();
 // teach express how to read JSON from the request body 
 server.use(express.json());
 
-// GET request through server for rendering the list of data
+
+
+
+// GET request through server for rendering the list of data ******
 server.get('/api/users', (req, res) => {
     dbModel
     .find()
@@ -25,7 +28,7 @@ server.get('/api/users', (req, res) => {
     });
 })
 
-//POST request to server 
+// POST <<< request to server ******
 server.post('/api/users', (req,res)=>{
 
     const dbData = req.body;
@@ -39,6 +42,22 @@ server.post('/api/users', (req,res)=>{
         res.json({message: 'error saving the user' })
     });
 })
+
+// DELETE
+
+
+
+
+
+
+//PUT 
+
+
+
+
+
+
+
 
 
 // port number 
