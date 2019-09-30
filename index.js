@@ -16,9 +16,9 @@ server.use(express.json());
 server.get('/api/users', (req, res) => {
     dbModel
     .find()
-    .then(hubs => {
+    .then(db => {
          //send list of hubs back to the client 
-        res.send(hubs);
+        res.send(db);
     }).catch(error => {
           res.send(error);
 
@@ -26,8 +26,18 @@ server.get('/api/users', (req, res) => {
 })
 
 //POST request to server 
-server.post('/api/user', (req,res)=>{
-    
+server.post('/api/users', (req,res)=>{
+
+    const dbData = req.body;
+
+    dbModel
+    .insert(dbData)
+    .then(db => {
+        res.json(db);
+    })
+    .catch(error => {
+        res.json({message: 'error saving the user' })
+    });
 })
 
 
