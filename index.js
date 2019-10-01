@@ -44,14 +44,42 @@ server.post('/api/users', (req,res)=>{
 })
 
 // DELETE
+server.delete('/api/users/:id', (req,res) => {
+  
+     const id = req.params.id;
 
+     dbModel
+     .remove(id)
+     .then(res => {
+         //send the list of hubs back to the client 
+        res.json(db);// .json() will set the right headers and convert to JSON
+    })
+    .catch(error => {
+        res.json({
+            message: 'error saving the db'});
+     });
+})
 
 
 
 
 
 //PUT 
+server.put('/api/user/:id', (req,res)=> {
+    const id = req.params.id;
+    //grab the changes from the body
+    const changes = req.body;
 
+     dbModel.update(id, changes)
+     .then(db => {
+        //send the list of hubs back to the client 
+        res.json(db);// .json() will set the right headers and convert to JSON
+        })
+        .catch(error => {
+            res.json({
+                message: 'error saving the db'});
+        });
+})
 
 
 
