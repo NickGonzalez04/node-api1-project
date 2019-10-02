@@ -21,12 +21,32 @@ server.get('/api/users', (req, res) => {
     .find()
     .then(db => {
          //send list of hubs back to the client 
+        if(db){
         res.send(db);
+        } else {}
     }).catch(error => {
-          res.send(error);
-
+        res.status(500).json({ error: "The users information could not be retrieved."});
+        //   res.send(error);
+    
     });
 })
+
+server.get('/api/users/:id', (req,res)=> {
+    dbModel
+    .findById()
+    .then(db => {
+    if(db){
+        res.send(db);// sends data if the id is there
+    } else { // if there is no id a 404 no found for the id is sent instead
+        res.status(404).json({ message: "The user with the specified ID does not exist." })
+    }
+    })
+    .catch(error => {
+        res.status(500).json({ error: "The user information could not be retrieved." })
+})
+
+
+
 
 // POST <<< request to server ******
 server.post('/api/users', (req,res)=>{
@@ -36,7 +56,14 @@ server.post('/api/users', (req,res)=>{
     dbModel
     .insert(dbData)
     .then(db => {
-        res.json(db);
+        if(!dbData.name && !dbData.bio){
+          res.status(400).json({
+            errorMessage: "Please provide name and bio for the user." 
+          });
+        }
+        else{
+            res.status(201).json(db);
+        }
     })
     .catch(error => {
         res.json({message: 'error saving the user' })
@@ -51,33 +78,43 @@ server.delete('/api/users/:id', (req,res) => {
      dbModel
      .remove(id)
      .then(res => {
-         //send the list of hubs back to the client 
+         //send the list of db's back to the client 
+        if(db) {
         res.json(db);// .json() will set the right headers and convert to JSON
+        } else { 
+            res.status(404).json({
+                message: "The user with the specified ID does not exist." })
+        }
     })
     .catch(error => {
-        res.json({
-            message: 'error saving the db'});
+        res.status(500).json({
+            message: "The user could not be removed" });
      });
 })
 
 
-
-
-
 //PUT 
-server.put('/api/user/:id', (req,res)=> {
+server.put('/api/users/:id', (req,res)=> {
     const id = req.params.id;
     //grab the changes from the body
     const changes = req.body;
 
-     dbModel.update(id, changes)
+     dbModel
+     .update(id, changes)
      .then(db => {
-        //send the list of hubs back to the client 
-        res.json(db);// .json() will set the right headers and convert to JSON
+        //send the list back to the client 
+        if(!db){
+            res.status(404).json({
+                message: "The user with the specified ID does not exist" })
+        } else if (changes.name && changes.bio) {
+            res.json(db);// .json() will set the right headers and convert to JSON
+        } else {
+            res.status(400).json({ errorMessage: "Please provide name and bio for the user." });
+            }
         })
         .catch(error => {
-            res.json({
-                message: 'error saving the db'});
+            res.status(500).json({
+                error: "The user information could not be modified." });
         });
 })
 
